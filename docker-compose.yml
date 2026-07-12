@@ -1,0 +1,25 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      DATABASE_URL: sqlite:////app/data/partomate.db
+      PARTOMATE_UPLOADS_DIR: /app/data/uploads
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is not set. Set SECRET_KEY in your .env file, e.g. SECRET_KEY=$(openssl rand -hex 32)}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-}
+    ports:
+      - "${BACKEND_PORT:-18000}:8000"
+    volumes:
+      - ./data:/app/data
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        VITE_API_PORT: ${BACKEND_PORT:-18000}
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-15173}:80"

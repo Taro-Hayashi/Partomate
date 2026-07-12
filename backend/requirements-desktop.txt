@@ -1,0 +1,8 @@
+# Desktop (tray app) build only. Not needed for the server / Docker deployment.
+# Install into venv alongside requirements.txt, then build with:
+#   venv/bin/pyinstaller partomate_desktop.spec --noconfirm
+pystray==0.19.5
+pillow==11.3.0
+pyinstaller==6.14.2
+# Needed by PyInstaller's pkg_resources runtime hook on Python < 3.12
+backports.tarfile==1.2.0
