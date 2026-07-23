@@ -1,4 +1,4 @@
-# Partomate
+# Partomate ([日本語](README_JP.md))
 
 Partomate is a web application for managing parts, inventory, and product compositions.
 It lets you track part quantities, categories, unit prices, purchase dates, and low-stock thresholds, as well as review the parts used in each product and their estimated cost.
