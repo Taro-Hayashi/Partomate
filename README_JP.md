@@ -8,7 +8,7 @@ AIが提案した変更は、ユーザーが承認した場合だけデータベ
 
 ![Partomate](img/title_jp.jpg)
 ![AI chat](img/topchat.jpg)
-![Inventory](img/iventory.jpg)
+![Inventory](img/inventory.jpg)
 ![Part details](img/item.jpg)
 ![Settings](img/setting.jpg)
 
