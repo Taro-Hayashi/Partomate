@@ -63,6 +63,14 @@ venv\Scripts\python -m PyInstaller partomate_desktop.spec --noconfirm
 
 `backend\dist\Partomate\Partomate.exe`（コンソールなし）が生成される。フォルダごと配置して exe を起動するとタスクトレイに常駐する（トレイの矢印に隠れている場合はドラッグで固定）。
 
+### Windows版のGitHub Actionsビルド
+
+[Build Windows package](../.github/workflows/build-windows.yml) は、GitHubのActions画面から手動実行するか、`v` で始まるタグをpushするとWindows版をビルドする。完了後、実行結果のArtifactsから `Partomate-Windows-x64` をダウンロードする。
+
+- GitHub-hosted Windows Runner上でビルドするため、署名情報は使用しない。
+- Artifactには `Partomate-Windows-x64.zip` が入り、展開後はフォルダ内の `Partomate.exe` を起動する。
+- Artifactの保存期間は14日。
+
 ## アイコン
 
 - ソースは `assets/icon/`（アプリ用、サイズ別PNG + SVG）と `assets/icon_mono/`（トレイ用、黒＋透過のサイズ別PNG）。
@@ -76,19 +84,11 @@ venv\Scripts\python -m PyInstaller partomate_desktop.spec --noconfirm
 Developer ID Application 証明書（キーチェーン登録済み）を前提に、以下で署名付きビルド〜公証まで行う。署名は `PARTOMATE_CODESIGN_IDENTITY` 未設定なら行われない（Windows ビルドや手元検証用はそのまま）。entitlements は [backend/entitlements.plist](../backend/entitlements.plist)（PyInstaller 製 Python アプリの hardened runtime 対応）。
 
 ```bash
-cd backend
-# 1. 署名付きビルド
 PARTOMATE_CODESIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" \
-  venv/bin/python -m PyInstaller partomate_desktop.spec --noconfirm
-
-# 2. 公証（認証情報は notarytool store-credentials で partomate-notary として登録済み）
-ditto -c -k --keepParent dist/Partomate.app /tmp/Partomate.zip
-xcrun notarytool submit /tmp/Partomate.zip --keychain-profile partomate-notary --wait
-
-# 3. ステープルと確認
-xcrun stapler staple dist/Partomate.app
-spctl --assess --type execute -vv dist/Partomate.app  # → accepted / Notarized Developer ID
+  scripts/build_macos_dmg.sh
 ```
+
+スクリプトはフロントエンドと `.app` をビルドし、コード署名を検証してから `backend/dist/Partomate.dmg` を作成する。そのDMGをAppleへ公証し、チケットのstapleとGatekeeper検証まで実行する。公証資格情報は `notarytool store-credentials` で保存した `partomate-notary` を既定で使用する。別名の場合は `PARTOMATE_NOTARY_PROFILE` で指定する。
 
 ## 既知の注意点
 
