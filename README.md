@@ -1,64 +1,67 @@
 # Partomate
 
-Partomate は、部品・在庫・商品構成を管理するためのWebアプリケーションです。
-部品の数量、カテゴリ、単価、購入日、低在庫しきい値を記録し、商品ごとの構成部品や概算原価を確認できます。
+Partomate is a web application for managing parts, inventory, and product compositions.
+It lets you track part quantities, categories, unit prices, purchase dates, and low-stock thresholds, as well as review the parts used in each product and their estimated cost.
 
-AIチャット機能を使うと、在庫の追加・消費や商品構成の変更案を自然文から作成できます。
-AIが提案した変更は、ユーザーが承認した場合だけデータベースへ反映されます。
+With the AI chat feature, you can describe inventory additions, inventory consumption, and product composition changes in natural language.
+AI-proposed changes are applied to the database only after the user approves them.
 
-## 主な機能
+![Partomate](img/title_en.jpg)
+![AI chat](img/topchat_en.jpg)
+![Inventory](img/iventory_en.jpg)
+![Part details](img/item_en.jpg)
+![Settings](img/setting_en.jpg)
 
-- 部品在庫の登録、編集、削除
-- 3階層カテゴリによる部品整理
-- 小数を含む数量管理
-- 低在庫しきい値と棚卸資産額の確認
-- 商品構成の登録と原価計算
-- 商品組み立てによる構成部品の在庫消費
-- OpenAI互換API / Ollama によるAIチャット連携
-- MCPサーバーによる外部LLMクライアント連携
+## Key Features
 
-## 推奨インストール方法
+- Create, edit, and delete parts in inventory
+- Organize parts using three-level categories
+- Manage quantities with decimal values
+- Review low-stock thresholds and total inventory value
+- Define product compositions and calculate costs
+- Consume component inventory when assembling products
+- Integrate AI chat through OpenAI-compatible APIs or Ollama
+- Connect external LLM clients through the MCP server
 
-配布版は Docker Compose での起動を基準にしています。
-macOS、Windows、Linuxで同じ手順を使いやすく、データもホスト側の `data/` に残せます。
+## Installing with Docker
 
-### 必要なもの
+### Requirements
 
-- Docker Desktop または Docker Engine
+- Docker Desktop or Docker Engine
 - Docker Compose
 
-### 起動
+### Starting the Application
 
-`.env.example` を `.env` にコピーし、`SECRET_KEY` に任意のランダム値を設定します。`SECRET_KEY` は必須で、未設定のままだと `docker compose` は起動時にエラーで停止します。
+Copy `.env.example` to `.env` and set `SECRET_KEY` to a random value. `SECRET_KEY` is required; if it is not set, `docker compose` will stop with an error during startup.
 
 ```bash
 cp .env.example .env
-# .env に SECRET_KEY を設定（例: openssl rand -hex 32 の出力）
+# Set SECRET_KEY in .env (for example, use the output of: openssl rand -hex 32)
 docker compose up --build
 ```
 
-起動後、ブラウザで以下を開きます。
+After the application starts, open the following URL in your browser:
 
 ```text
 http://localhost:15173
 ```
 
-APIは以下で公開されます。
+The API is available at:
 
 ```text
 http://localhost:18000
 ```
 
-既に `18000` 番や `15173` 番を別のアプリが使っている場合は、`.env` でポートを変更できます。
+If ports `18000` or `15173` are already in use by another application, you can change them in `.env`:
 
 ```env
 FRONTEND_PORT=5173
 BACKEND_PORT=8000
 ```
 
-### データ保存場所
+### Data Storage
 
-Docker版では、DBとアップロードファイルをホスト側の `data/` に保存します。
+The Docker version stores the database and uploaded files in the host-side `data/` directory:
 
 ```text
 data/
@@ -68,67 +71,67 @@ data/
   uploads/
 ```
 
-`data/` を残しておけば、コンテナやイメージを作り直しても在庫・商品・設定データは残ります。
-バックアップや別PCへの移行では、まず `data/` ディレクトリをコピーしてください。
+As long as you keep the `data/` directory, your inventory, products, and settings will remain intact even if you recreate the containers or images.
+To back up your data or migrate to another computer, copy the `data/` directory first.
 
-## 初回セットアップ
+## Initial Setup
 
-初回アクセス時は管理者ユーザーの登録画面が表示されます。
-管理者ユーザーを作成すると、ログインして在庫管理を始められます。
+The administrator registration screen appears the first time you access the application.
+After creating the administrator account, you can log in and start managing your inventory.
 
-本アプリはセルフホスト型の単一管理者運用を前提としており、初回登録後は追加のユーザー登録・管理機能はありません。
+Partomate is designed as a self-hosted application operated by a single administrator. After the initial registration, there are no features for registering or managing additional users.
 
-DBが空の場合、以下のサンプルデータが自動投入されます。
+When the database is empty, the following sample data is added automatically:
 
-- `M2 6mm ネジ`: 100個
-- `M2 ナット`: 100個
-- `Pro Micro マイクロコントローラー`: 1個
-- `リードタイプ 1N4148 ダイオード`: 9個
-- `ゴム足`: 4個
-- `商品A`: 上記部品を使うサンプル商品
+- `M2 6 mm screw`: 100 pieces
+- `M2 nut`: 100 pieces
+- `Pro Micro microcontroller`: 1 piece
+- `Lead-type 1N4148 diode`: 9 pieces
+- `Rubber foot`: 4 pieces
+- `Product A`: A sample product made from the parts listed above
 
-既に部品または商品が存在するDBでは、サンプルデータは投入されません。
+Sample data is not added if the database already contains any parts or products.
 
-## 管理者パスワードを忘れた場合
+## If You Forget the Administrator Password
 
-パスワードのリセット機能はありません。管理者パスワードを忘れた場合は、DBの `users` テーブルを空にすると初回登録画面が再度有効になり、新しい管理者を登録し直せます。
+There is no password reset feature. If you forget the administrator password, empty the `users` table in the database. This re-enables the initial registration screen so that you can register a new administrator.
 
-`users` テーブルを空にしても、在庫（部品）・商品構成・設定などのデータは削除されません。
+Emptying the `users` table does not delete inventory, product compositions, settings, or other application data.
 
-作業前にアプリ（またはコンテナ）を停止し、念のため `data/` をバックアップしてから実行してください。
+Before proceeding, stop the application or container and back up the `data/` directory as a precaution.
 
-Docker運用時（`./data/partomate.db` をボリュームマウントしている場合）:
+When using Docker with `./data/partomate.db` mounted as a volume:
 
 ```bash
 sqlite3 ./data/partomate.db "DELETE FROM users;"
 ```
 
-ローカル開発時（`backend/partomate.db`）:
+For local development with `backend/partomate.db`:
 
 ```bash
 sqlite3 backend/partomate.db "DELETE FROM users;"
 ```
 
-実行後にアプリを再起動し、ブラウザでアクセスすると初回登録画面が表示されます。
+Restart the application after running the command. The initial registration screen will appear when you open the application in your browser.
 
-## AI機能
+## AI Features
 
-AI機能はOpenAI互換APIまたはOllamaなどの外部LLMサーバーに接続して使います。
-モデル本体やOllamaはPartomateには同梱していません。
+The AI features connect to an external LLM server, such as an OpenAI-compatible API or Ollama.
+Partomate does not include an AI model or Ollama.
 
-設定画面から以下を指定できます。
+You can configure the following options on the Settings page:
 
-- LLMプロバイダ
+- LLM provider
 - API URL
-- モデル名
-- OpenAI互換APIキー
-- システムプロンプト
+- Model name
+- OpenAI-compatible API key
+- System prompt
 
-## 開発用起動
+## Running in Development
 
-バックエンド:
+Backend:
 
-`SECRET_KEY` はJWT署名に必須です。未設定のままだと起動時にエラーで停止するため、開発時は任意のランダム値を設定します。
+`SECRET_KEY` is required for signing JWTs. The backend will stop with an error at startup if it is not set, so set it to a random value for development.
 
 ```bash
 cd backend
@@ -137,37 +140,37 @@ export SECRET_KEY=$(openssl rand -hex 32)
 uvicorn app.main:app --reload --port 18000
 ```
 
-フロントエンド:
+Frontend:
 
 ```bash
 cd frontend
 npm run dev
 ```
 
-ブラウザで `http://localhost:15173` を開きます。
+Open `http://localhost:15173` in your browser.
 
-開発時の既定DBは `backend/partomate.db` です。
-Docker版では `DATABASE_URL` により `data/partomate.db` を使います。
+The default database for local development is `backend/partomate.db`.
+The Docker version uses `data/partomate.db` through `DATABASE_URL`.
 
-## 検証
+## Verification
 
-バックエンド:
+Backend:
 
 ```bash
 cd backend
 python -m pytest test_api.py
 ```
 
-フロントエンド:
+Frontend:
 
 ```bash
 cd frontend
 npm run build
 ```
 
-## 関連ドキュメント
+## Related Documentation
 
-- 仕様: [docs/spec.md](docs/spec.md)
-- 開発メモ: [docs/development.md](docs/development.md)
-- 配布方針: [docs/deployment.md](docs/deployment.md)
-- MCP接続: [README_MCP.md](README_MCP.md)
+- Specification: [docs/spec.md](docs/spec.md)
+- Development notes: [docs/development.md](docs/development.md)
+- Distribution policy: [docs/deployment.md](docs/deployment.md)
+- MCP connection: [README_MCP.md](README_MCP.md)
