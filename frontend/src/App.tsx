@@ -334,7 +334,7 @@ function App() {
   if (setupRequired === null) {
     return (
       <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
-        接続確認中...
+        {getTranslation(language, 'checking_connection')}
       </div>
     );
   }
