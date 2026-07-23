@@ -3,6 +3,7 @@ import { SetupAdmin } from './components/SetupAdmin';
 import { Login } from './components/Login';
 import { Navigation } from './components/Navigation';
 import { type Message } from './types/chat';
+import { getTranslation } from './utils/i18n';
 
 const PartsPage = lazy(() => import('./components/PartsPage').then((m) => ({ default: m.PartsPage })));
 const ProductsPage = lazy(() => import('./components/ProductsPage').then((m) => ({ default: m.ProductsPage })));

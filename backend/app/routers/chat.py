@@ -539,7 +539,6 @@ def chat_execute(
 ):
     exec_type = payload.get("type")
     action = payload.get("action")
-    is_en = (get_setting_value(db, "language") or "ja") == "en"
     if action == "update_metadata":
         action = "price"
 
@@ -704,7 +703,10 @@ def chat_execute(
                 else:
                     raise HTTPException(
                         status_code=400,
-                        detail=f"Part '{generated_name}' not found for consume action."
+                        detail={
+                            "key": "chat_part_not_found_for_consumption",
+                            "params": {"name": generated_name},
+                        },
                     )
             
             db.commit()
@@ -713,7 +715,7 @@ def chat_execute(
                 updated_parts.append(db_part)
         return {
             "status": "success",
-            "message": "Inventory updated." if is_en else "在庫を更新しました。",
+            "message": {"key": "chat_inventory_updated"},
             "parts": updated_parts,
         }
 
@@ -729,11 +731,7 @@ def chat_execute(
         if not items:
             raise HTTPException(
                 status_code=400,
-                detail=(
-                    "No product was specified for assembly."
-                    if is_en
-                    else "組み立てる商品が指定されていません。"
-                ),
+                detail={"key": "chat_no_product_specified"},
             )
 
         results = []
@@ -751,11 +749,10 @@ def chat_execute(
             if not product:
                 raise HTTPException(
                     status_code=404,
-                    detail=(
-                        f'Product "{p_name}" is not registered.'
-                        if is_en
-                        else f"商品「{p_name}」が登録されていません。"
-                    ),
+                    detail={
+                        "key": "chat_product_not_registered",
+                        "params": {"name": p_name},
+                    },
                 )
 
             # Reduce stock quantities for each recipe component
@@ -772,14 +769,12 @@ def chat_execute(
                 
                 # Check alert threshold
                 if part.alert_threshold > 0.0 and part.quantity <= part.alert_threshold:
-                    low_stock_alerts.append(
-                        (
-                            f"- {part.name} (Current stock: {part.quantity} {part.unit} / "
-                            f"Threshold: {part.alert_threshold} {part.unit})"
-                            if is_en
-                            else f"・{part.name} (現在庫: {part.quantity} {part.unit} / 閾値: {part.alert_threshold} {part.unit})"
-                        )
-                    )
+                    low_stock_alerts.append({
+                        "name": part.name,
+                        "quantity": part.quantity,
+                        "unit": part.unit,
+                        "threshold": part.alert_threshold,
+                    })
 
             results.append({
                 "product_name": product.name,
@@ -788,30 +783,39 @@ def chat_execute(
 
         db.commit()
         
-        msg_parts = []
-        for r in results:
-            msg_parts.append(
-                (
-                    f'Assembled {r["product_count"]} of "{r["product_name"]}" and consumed its component parts.'
-                    if is_en
-                    else f"商品「{r['product_name']}」を{r['product_count']}個組み立て、構成部品を消費しました。"
-                )
-            )
-        msg = "\n".join(msg_parts)
+        message_segments = [
+            {
+                "key": "chat_product_assembled",
+                "params": {
+                    "name": result["product_name"],
+                    "count": result["product_count"],
+                },
+            }
+            for result in results
+        ]
 
         if low_stock_alerts:
-            # Deduplicate alerts
-            low_stock_alerts = list(set(low_stock_alerts))
-            alert_heading = (
-                "\n\n⚠️ Alert: The following parts are at or below their minimum stock levels:\n"
-                if is_en
-                else "\n\n⚠️ 【アラート】以下の部品の在庫が最低在庫数以下になりました：\n"
-            )
-            msg += alert_heading + "\n".join(low_stock_alerts)
+            unique_alerts = list({
+                (
+                    alert["name"],
+                    alert["quantity"],
+                    alert["unit"],
+                    alert["threshold"],
+                ): alert
+                for alert in low_stock_alerts
+            }.values())
+            message_segments.extend([
+                "",
+                {"key": "chat_low_stock_alert_heading"},
+                *[
+                    {"key": "chat_low_stock_alert_item", "params": alert}
+                    for alert in unique_alerts
+                ],
+            ])
 
         return {
             "status": "success",
-            "message": msg,
+            "message": message_segments,
             "consumed_parts": consumed_parts_summary
         }
 
@@ -822,7 +826,10 @@ def chat_execute(
         recipe_parts = payload.get("parts", [])
 
         if not product_name:
-            raise HTTPException(status_code=400, detail="Product name is required.")
+            raise HTTPException(
+                status_code=400,
+                detail={"key": "chat_product_name_required"},
+            )
 
         product = None
         if action == "update":
@@ -838,7 +845,10 @@ def chat_execute(
         else:
             existing_product = find_exact_product_by_name(db, product_name)
             if existing_product:
-                raise HTTPException(status_code=400, detail="Product name already exists.")
+                raise HTTPException(
+                    status_code=400,
+                    detail={"key": "chat_product_name_exists"},
+                )
 
         if not product:
             product = Product(name=product_name, description=description)
@@ -890,11 +900,10 @@ def chat_execute(
         db.refresh(product)
         return {
             "status": "success",
-            "message": (
-                f'Updated the product recipe for "{product.name}".'
-                if is_en
-                else f"商品「{product.name}」の商品構成を登録・更新しました。"
-            ),
+            "message": {
+                "key": "chat_product_recipe_updated",
+                "params": {"name": product.name},
+            },
             "product": {
                 "id": product.id,
                 "name": product.name,
@@ -917,8 +926,11 @@ def chat_execute(
         db.commit()
         return {
             "status": "success",
-            "message": "System settings updated." if is_en else "システム設定を更新しました。",
+            "message": {"key": "chat_settings_updated"},
         }
 
     else:
-        raise HTTPException(status_code=400, detail="Invalid execution type.")
+        raise HTTPException(
+            status_code=400,
+            detail={"key": "chat_invalid_execution_type"},
+        )

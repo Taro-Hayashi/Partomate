@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Check } from 'lucide-react';
-import { getTranslation } from '../utils/i18n';
+import { getTranslation, translateApiMessage } from '../utils/i18n';
 import { formatUnit, sortProductsByProductSort } from '../utils/inventory';
 import { normalizeDate, formatConsumedQuantity, getProductPreviewParts } from '../utils/chat';
 import { usePersistentState } from '../hooks/usePersistentState';
@@ -356,10 +356,15 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.detail || 'Apply failed.');
+        throw new Error(translateApiMessage(language, errData.detail, 'chat_generic_error'));
       }
 
       const resData = await response.json();
+      const responseLanguage =
+        cleanedData?.type === 'settings' &&
+        (cleanedData?.updates?.language === 'ja' || cleanedData?.updates?.language === 'en')
+          ? cleanedData.updates.language
+          : language;
 
       setMessages((prev) =>
         prev.map((m) => (m.id === msgId ? { ...m, isExecuted: true } : m))
@@ -368,7 +373,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({
       const systemMessage: Message = {
         id: Date.now().toString(),
         sender: 'system',
-        text: resData.message || t('chat_apply_success'),
+        text: translateApiMessage(responseLanguage, resData.message, 'chat_apply_success'),
       };
       setMessages((prev) => [...prev, systemMessage]);
     } catch (err) {

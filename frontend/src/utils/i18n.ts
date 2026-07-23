@@ -318,6 +318,18 @@ export const translations: Record<string, Record<string, string>> = {
     chat_settings_change_detected: "システム設定の変更を検出しました。以下の差分を反映しますか？",
     chat_could_not_interpret: "ご指示の内容を解釈できませんでした。具体的に入力してみてください。",
     chat_applied_to_db: "データベースに反映が完了しました。",
+    chat_inventory_updated: "在庫を更新しました。",
+    chat_settings_updated: "システム設定を更新しました。",
+    chat_no_product_specified: "組み立てる商品が指定されていません。",
+    chat_part_not_found_for_consumption: "消費対象の部品「{name}」が見つかりません。",
+    chat_product_not_registered: "商品「{name}」が登録されていません。",
+    chat_product_assembled: "商品「{name}」を{count}個組み立て、構成部品を消費しました。",
+    chat_low_stock_alert_heading: "⚠️ 【アラート】以下の部品の在庫が最低在庫数以下になりました：",
+    chat_low_stock_alert_item: "・{name} (現在庫: {quantity} {unit} / 閾値: {threshold} {unit})",
+    chat_product_name_required: "商品名を入力してください。",
+    chat_product_name_exists: "同じ商品名がすでに登録されています。",
+    chat_product_recipe_updated: "商品「{name}」の商品構成を登録・更新しました。",
+    chat_invalid_execution_type: "実行内容が正しくありません。",
     chat_qty_label: "数量: ",
     chat_date_label_inline: "日付: ",
     chat_alert_threshold_label: "アラート閾値:",
@@ -687,6 +699,18 @@ export const translations: Record<string, Record<string, string>> = {
     chat_settings_change_detected: "Detected changes to system settings. Apply the following differences?",
     chat_could_not_interpret: "Sorry, I couldn't interpret your instructions. Please try entering more specific details.",
     chat_applied_to_db: "Changes successfully applied to the database.",
+    chat_inventory_updated: "Inventory updated.",
+    chat_settings_updated: "System settings updated.",
+    chat_no_product_specified: "No product was specified for assembly.",
+    chat_part_not_found_for_consumption: 'Part "{name}" was not found for consumption.',
+    chat_product_not_registered: 'Product "{name}" is not registered.',
+    chat_product_assembled: 'Assembled {count} of "{name}" and consumed its component parts.',
+    chat_low_stock_alert_heading: "⚠️ Alert: The following parts are at or below their minimum stock levels:",
+    chat_low_stock_alert_item: "- {name} (Current stock: {quantity} {unit} / Threshold: {threshold} {unit})",
+    chat_product_name_required: "Product name is required.",
+    chat_product_name_exists: "A product with this name already exists.",
+    chat_product_recipe_updated: 'Updated the product recipe for "{name}".',
+    chat_invalid_execution_type: "Invalid execution type.",
     chat_qty_label: "Qty: ",
     chat_date_label_inline: "Date: ",
     chat_alert_threshold_label: "Alert threshold:",
@@ -744,8 +768,41 @@ export const getTranslation = (lang: string, key: string, params?: Record<string
   let text = dict[key] || key;
   if (params) {
     Object.entries(params).forEach(([paramKey, paramValue]) => {
-      text = text.replace(`{${paramKey}}`, String(paramValue));
+      text = text.split(`{${paramKey}}`).join(String(paramValue));
     });
   }
   return text;
+};
+
+type ApiMessageDescriptor = {
+  key: string;
+  params?: Record<string, string | number>;
+};
+
+export type ApiMessage = string | ApiMessageDescriptor | ApiMessage[];
+
+export const translateApiMessage = (
+  lang: string,
+  value: unknown,
+  fallbackKey: string,
+): string => {
+  if (typeof value === "string") return value;
+
+  if (Array.isArray(value)) {
+    return value
+      .map((segment) => translateApiMessage(lang, segment, fallbackKey))
+      .join("\n");
+  }
+
+  if (value && typeof value === "object") {
+    const descriptor = value as Partial<ApiMessageDescriptor>;
+    if (typeof descriptor.key === "string") {
+      const dict = translations[lang] || translations.ja;
+      if (dict[descriptor.key]) {
+        return getTranslation(lang, descriptor.key, descriptor.params);
+      }
+    }
+  }
+
+  return getTranslation(lang, fallbackKey);
 };

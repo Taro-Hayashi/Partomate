@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Check, X } from 'lucide-react';
-import { getTranslation } from '../utils/i18n';
+import { getTranslation, translateApiMessage } from '../utils/i18n';
 import { formatUnit } from '../utils/inventory';
 import { normalizeDate, getDateParts, formatConsumedQuantity, getProductPreviewParts } from '../utils/chat';
 import { useQuickActionsScroll } from '../hooks/useQuickActionsScroll';
@@ -347,6 +347,14 @@ export const PageChatDrawer = React.forwardRef<PageChatDrawerRef, PageChatDrawer
   const formatApiError = (detail: unknown): string => {
     if (!detail) return 'Execution failed.';
     if (typeof detail === 'string') return detail;
+    if (
+      detail &&
+      typeof detail === 'object' &&
+      !Array.isArray(detail) &&
+      typeof (detail as { key?: unknown }).key === 'string'
+    ) {
+      return translateApiMessage(language, detail, 'chat_generic_error');
+    }
     if (Array.isArray(detail)) {
       return detail.map((entry) => {
         if (entry && typeof entry === 'object') {
@@ -1357,6 +1365,15 @@ export const PageChatDrawer = React.forwardRef<PageChatDrawerRef, PageChatDrawer
         throw new Error(formatApiError(errData.detail || errData));
       }
 
+      let responseData: any = null;
+      if (response) {
+        try {
+          responseData = await response.json();
+        } catch {
+          responseData = null;
+        }
+      }
+
       setMessages((prev) =>
         prev.map((m) => (m.id === msgId ? { ...m, isExecuted: true } : m))
       );
@@ -1364,7 +1381,7 @@ export const PageChatDrawer = React.forwardRef<PageChatDrawerRef, PageChatDrawer
       const systemMessage: Message = {
         id: Date.now().toString(),
         sender: 'system',
-        text: t('chat_applied_to_db'),
+        text: translateApiMessage(language, responseData?.message, 'chat_applied_to_db'),
       };
       setMessages((prev) => [...prev, systemMessage]);
 

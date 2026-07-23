@@ -178,22 +178,17 @@ def test_flow():
     assert response.json()["product"]["parts"][0]["quantity"] == 3.0
 
     response = client.get("/api/parts", headers=headers)
-
-    # 13.6 Chat execution messages follow the selected UI language
-    response = client.post(
-        "/api/settings",
-        json={"language": "en"},
-        headers=headers,
-    )
     assert response.status_code == 200
+    assert all(part["name"] != "存在しない部品" for part in response.json())
 
+    # 13.6 Chat execution returns language-independent i18n descriptors
     response = client.post(
         "/api/chat/execute",
         json={"type": "settings", "updates": {"currency": "JPY"}},
         headers=headers,
     )
     assert response.status_code == 200
-    assert response.json()["message"] == "System settings updated."
+    assert response.json()["message"] == {"key": "chat_settings_updated"}
 
     response = client.post(
         "/api/chat/execute",
@@ -206,7 +201,7 @@ def test_flow():
                     "category1": "ネジ",
                     "category2": "M2",
                     "category3": "8mm",
-                    "quantity": 1,
+                    "quantity": 0,
                     "unit": "pcs",
                 }
             ],
@@ -214,9 +209,15 @@ def test_flow():
         headers=headers,
     )
     assert response.status_code == 200
-    assert response.json()["message"] == "Inventory updated."
-    assert response.status_code == 200
-    assert all(part["name"] != "存在しない部品" for part in response.json())
+    assert response.json()["message"] == {"key": "chat_inventory_updated"}
+
+    response = client.post(
+        "/api/chat/execute",
+        json={"type": "product", "action": "consume", "items": []},
+        headers=headers,
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"] == {"key": "chat_no_product_specified"}
 
     response = client.get("/api/products", headers=headers)
     assert response.status_code == 200
@@ -705,6 +706,14 @@ def test_flow():
     }
     response = client.post("/api/chat/execute", json=multiple_product_consume_payload, headers=headers)
     assert response.status_code == 200
+    assert response.json()["message"][0] == {
+        "key": "chat_product_assembled",
+        "params": {"name": "商品B", "count": 2.0},
+    }
+    assert response.json()["message"][1] == {
+        "key": "chat_product_assembled",
+        "params": {"name": "商品C", "count": 5.0},
+    }
     
     # Verify quantities:
     # screw: 900.0 - 20 (from B) - 25 (from C) = 855.0
