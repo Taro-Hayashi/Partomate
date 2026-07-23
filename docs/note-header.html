@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Partomate note header</title>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@600&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=BIZ+UDPGothic&family=M+PLUS+1p:wght@500&family=Noto+Sans+JP:wght@500&family=Outfit:wght@600&family=Zen+Kaku+Gothic+New:wght@500&display=swap");
 
       :root {
         --tomato: #ff6347;
@@ -47,20 +47,38 @@
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        gap: 14px;
+        gap: 22px;
+      }
+
+      .tagline-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
       }
 
       .tagline {
         color: #5c5549;
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI",
-          YuGothic, "Yu Gothic Medium", "Hiragino Sans",
-          "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
         font-size: 42px;
         font-weight: 500;
         line-height: 1;
         letter-spacing: 0.08em;
         text-align: center;
+      }
+
+      .font-zen-kaku {
+        font-family: "Zen Kaku Gothic New", sans-serif;
+      }
+
+      .font-m-plus {
+        font-family: "M PLUS 1p", sans-serif;
+      }
+
+      .font-biz-udp {
+        font-family: "BIZ UDPGothic", sans-serif;
+      }
+
+      .font-noto-sans {
+        font-family: "Noto Sans JP", sans-serif;
       }
 
       .brand {
@@ -90,7 +108,12 @@
   <body>
     <main class="header" aria-label="Partomate">
       <div class="brand-lockup">
-        <div class="tagline">LLM対話型在庫管理アプリ</div>
+        <div class="tagline-options" aria-label="フォント比較">
+          <div class="tagline font-zen-kaku">LLM対話型在庫管理アプリ</div>
+          <div class="tagline font-m-plus">LLM対話型在庫管理アプリ</div>
+          <div class="tagline font-biz-udp">LLM対話型在庫管理アプリ</div>
+          <div class="tagline font-noto-sans">LLM対話型在庫管理アプリ</div>
+        </div>
         <div class="brand">
           <img
             class="brand-icon"
