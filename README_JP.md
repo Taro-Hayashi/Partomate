@@ -6,11 +6,11 @@ Partomate は、部品・在庫・商品構成を管理するためのWebアプ�
 AIチャット機能を使うと、在庫の追加・消費や商品構成の変更案を自然文から作成できます。
 AIが提案した変更は、ユーザーが承認した場合だけデータベースへ反映されます。
 
-![[img/title_jp.jpg]]
-![[img/topchat.jpg]]
-![[img/inventory.jpg]]
-![[item.jpg]]
-![[setting.jpg]]
+![Partomate](img/title_jp.jpg)
+![AI chat](img/topchat.jpg)
+![Inventory](img/iventory.jpg)
+![Part details](img/item.jpg)
+![Settings](img/setting.jpg)
 
 ## 主な機能
 
