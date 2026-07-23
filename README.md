@@ -23,6 +23,10 @@ AI-proposed changes are applied to the database only after the user approves the
 - Integrate AI chat through OpenAI-compatible APIs or Ollama
 - Connect external LLM clients through the MCP server
 
+## Recomended Models
+- [Qwen3-VL-4B-Instruct-GGUF](https://huggingface.co/unsloth/Qwen3-VL-4B-Instruct-GGUF)
+- GPT-5.4 nano
+
 ## Installing with Docker
 
 ### Requirements

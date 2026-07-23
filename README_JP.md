@@ -23,6 +23,10 @@ AIが提案した変更は、ユーザーが承認した場合だけデータベ
 - OpenAI互換API / Ollama によるAIチャット連携
 - MCPサーバーによる外部LLMクライアント連携
 
+## おすすめのモデル
+- [Qwen3-VL-4B-Instruct-GGUF](https://huggingface.co/unsloth/Qwen3-VL-4B-Instruct-GGUF)
+- GPT-5.4 nano
+
 ## Docker版のインストール方法
 
 
