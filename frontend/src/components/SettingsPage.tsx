@@ -1227,6 +1227,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 >
                   Shift + Enter
                 </button>
+                <button
+                  type="button"
+                  className={`btn ${sendKey === 'ctrl_cmd_enter' ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ flex: 1, padding: '0 12px', fontSize: '0.85rem', borderRadius: '6px', border: 'none', background: !llmEnabled ? 'transparent' : sendKey === 'ctrl_cmd_enter' ? 'var(--accent-primary)' : 'transparent', color: !llmEnabled ? 'var(--text-muted)' : sendKey === 'ctrl_cmd_enter' ? '#fff' : 'var(--text-secondary)', opacity: !llmEnabled ? 0.65 : 1, height: '100%', boxSizing: 'border-box', boxShadow: llmEnabled && sendKey === 'ctrl_cmd_enter' ? '0 2px 8px rgba(var(--accent-primary-rgb), 0.3)' : 'none' }}
+                  disabled={!llmEnabled}
+                  onClick={() => setSendKey('ctrl_cmd_enter')}
+                >
+                  Ctrl / Cmd +Enter
+                </button>
               </div>
             </div>
           </div>

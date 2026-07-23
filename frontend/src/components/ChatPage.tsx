@@ -1033,12 +1033,12 @@ export const ChatPage: React.FC<ChatPageProps> = ({
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.nativeEvent.isComposing) return;
-                const isEnterSubmit = sendKey === 'enter';
                 if (e.key === 'Enter') {
-                  if (isEnterSubmit && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSend(input);
-                  } else if (!isEnterSubmit && e.shiftKey) {
+                  const shouldSubmit =
+                    (sendKey === 'enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey) ||
+                    (sendKey === 'shift_enter' && e.shiftKey && !e.ctrlKey && !e.metaKey) ||
+                    (sendKey === 'ctrl_cmd_enter' && (e.ctrlKey || e.metaKey) && !e.shiftKey);
+                  if (shouldSubmit) {
                     e.preventDefault();
                     handleSend(input);
                   }
@@ -1077,7 +1077,13 @@ export const ChatPage: React.FC<ChatPageProps> = ({
                   }
                 }
               }}
-              placeholder={sendKey === 'enter' ? t('chat_press_enter_to_send') : t('chat_drawer_placeholder')}
+              placeholder={
+                sendKey === 'enter'
+                  ? t('chat_press_enter_to_send')
+                  : sendKey === 'ctrl_cmd_enter'
+                    ? t('chat_press_ctrl_cmd_enter_to_send')
+                    : t('chat_drawer_placeholder')
+              }
               disabled={loading}
               rows={1}
               style={{

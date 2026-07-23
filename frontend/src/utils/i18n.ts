@@ -233,6 +233,7 @@ export const translations: Record<string, Record<string, string>> = {
     // Chat Drawer
     chat_drawer_title: "AIアシスタントへの指示",
     chat_drawer_placeholder: "Shift+Enterで送信します...",
+    chat_press_ctrl_cmd_enter_to_send: "Ctrl / Cmd +Enterで送信します...",
     chat_drawer_close: "チャットを閉じる",
     chat_drawer_exec: "上記の内容を承認・反映する",
     chat_drawer_executed: "データベースに反映済み",
@@ -614,6 +615,7 @@ export const translations: Record<string, Record<string, string>> = {
     // Chat Drawer
     chat_drawer_title: "Ask AI Assistant",
     chat_drawer_placeholder: "Press Shift+Enter to send...",
+    chat_press_ctrl_cmd_enter_to_send: "Press Ctrl / Cmd +Enter to send...",
     chat_drawer_close: "Close Chat Drawer",
     chat_drawer_exec: "Approve & Apply Changes",
     chat_drawer_executed: "Applied to Database",

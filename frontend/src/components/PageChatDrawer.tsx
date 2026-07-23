@@ -162,7 +162,13 @@ const getSettingValueLabel = (key: string, val: unknown, lang: string): string =
   }
 
   if (key === 'send_key') {
-    return valStr === 'enter' ? 'Enter' : valStr === 'shift_enter' ? 'Shift + Enter' : valStr;
+    return valStr === 'enter'
+      ? 'Enter'
+      : valStr === 'shift_enter'
+        ? 'Shift + Enter'
+        : valStr === 'ctrl_cmd_enter'
+          ? 'Ctrl / Cmd +Enter'
+          : valStr;
   }
 
   if (key === 'llm_provider') {
@@ -2398,16 +2404,16 @@ export const PageChatDrawer = React.forwardRef<PageChatDrawerRef, PageChatDrawer
               }
             }}
             onBlur={() => setIsInputFocused(false)}
-            placeholder={`${sendKey === 'enter' ? t('chat_press_enter_to_send') : t('chat_drawer_placeholder')} (${mode === 'parts' ? t('chat_price_stock_adjust') : mode === 'products' ? t('chat_product_config') : t('chat_change_config')})`}
+            placeholder={`${sendKey === 'enter' ? t('chat_press_enter_to_send') : sendKey === 'ctrl_cmd_enter' ? t('chat_press_ctrl_cmd_enter_to_send') : t('chat_drawer_placeholder')} (${mode === 'parts' ? t('chat_price_stock_adjust') : mode === 'products' ? t('chat_product_config') : t('chat_change_config')})`}
             disabled={loading}
             onKeyDown={(e) => {
               if (e.nativeEvent.isComposing) return;
-              const isEnterSubmit = sendKey === 'enter';
               if (e.key === 'Enter') {
-                if (isEnterSubmit && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                } else if (!isEnterSubmit && e.shiftKey) {
+                const shouldSubmit =
+                  (sendKey === 'enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey) ||
+                  (sendKey === 'shift_enter' && e.shiftKey && !e.ctrlKey && !e.metaKey) ||
+                  (sendKey === 'ctrl_cmd_enter' && (e.ctrlKey || e.metaKey) && !e.shiftKey);
+                if (shouldSubmit) {
                   e.preventDefault();
                   handleSend();
                 }

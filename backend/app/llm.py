@@ -70,7 +70,7 @@ class SettingsUpdates(BaseModel):
     background_image_layout: Optional[Literal["tile", "original", "fit"]] = None
     currency: Optional[Literal["JPY", "USD", "EUR"]] = None
     language: Optional[Literal["ja", "en"]] = None
-    send_key: Optional[Literal["enter", "shift_enter"]] = None
+    send_key: Optional[Literal["enter", "shift_enter", "ctrl_cmd_enter"]] = None
     llm_provider: Optional[Literal["openai", "ollama", "openai_api"]] = None
     llm_url: Optional[str] = None
     llm_model: Optional[str] = None
@@ -371,7 +371,7 @@ SETTINGS_SYSTEM_PROMPT = """
   - background_image_layout (背景画像の表示方式): "tile" (タイル), "original" (等倍), "fit" (フィッティング)
   - currency (通貨): "JPY", "USD", "EUR"
   - language (言語): "ja" (日本語), "en" (英語)
-  - send_key (送信キー): "enter", "shift_enter"
+  - send_key (送信キー): "enter", "shift_enter", "ctrl_cmd_enter"
   - llm_provider (LLMプロバイダ): "openai", "ollama", "openai_api"
   - llm_url (API URL): 任意のURL文字列
   - llm_model (モデル名): 任意のモデル名文字列
@@ -380,7 +380,7 @@ SETTINGS_SYSTEM_PROMPT = """
   - allowed_hosts (アクセス許可ホスト): 任意のカンマ区切り文字列
   - clear_delete_confirm_skips (削除確認メッセージの表示状況クリア): "true" のみ。部品在庫・商品構成の削除確認で「今後表示しない」を選んだ状態をリセットし、確認メッセージを再び表示させる（例：「削除の確認をまた表示して」「削除確認の表示状況をクリアして」）
 - ユーザーの指示が設定変更に該当する場合、対応する項目名と新しい値を `updates` に含めてください。
-- 値は上記の「有効な値」に厳密に変換してください（例：「背景を暗くして」→ theme_wallpaperを"dark"に設定、「背景画像を水玉にして」→ background_image_modeを"dots"に設定、「背景画像を斜線にして」→ background_image_modeを"stripes"に設定、「背景画像をチェック柄にして」→ background_image_modeを"checks"に設定、「背景画像を無しにして」→ background_image_modeを"none"に設定、「水玉を大きくして」→ background_dot_sizeを現在値より大きい数値文字列に設定、「斜線を太くして」→ background_stripe_widthを現在値より大きい数値文字列に設定、「チェック柄の間隔を広くして」→ background_check_sizeを現在値より大きい数値文字列に設定、「画像をタイル表示にして」→ background_image_layoutを"tile"に設定、「画像を等倍表示にして」→ background_image_layoutを"original"に設定、「画像を画面に合わせて」→ background_image_layoutを"fit"に設定、「テーマを青にして」→ theme_colorを"ocean"に設定、「テーマをレモンにして」→ theme_colorを"lemon"に設定、「送信キーをエンターのみに」→ send_keyを"enter"に設定）。
+- 値は上記の「有効な値」に厳密に変換してください（例：「背景を暗くして」→ theme_wallpaperを"dark"に設定、「背景画像を水玉にして」→ background_image_modeを"dots"に設定、「背景画像を斜線にして」→ background_image_modeを"stripes"に設定、「背景画像をチェック柄にして」→ background_image_modeを"checks"に設定、「背景画像を無しにして」→ background_image_modeを"none"に設定、「水玉を大きくして」→ background_dot_sizeを現在値より大きい数値文字列に設定、「斜線を太くして」→ background_stripe_widthを現在値より大きい数値文字列に設定、「チェック柄の間隔を広くして」→ background_check_sizeを現在値より大きい数値文字列に設定、「画像をタイル表示にして」→ background_image_layoutを"tile"に設定、「画像を等倍表示にして」→ background_image_layoutを"original"に設定、「画像を画面に合わせて」→ background_image_layoutを"fit"に設定、「テーマを青にして」→ theme_colorを"ocean"に設定、「テーマをレモンにして」→ theme_colorを"lemon"に設定、「送信キーをエンターのみに」→ send_keyを"enter"に設定、「送信キーをCtrl/Cmd+Enterに」→ send_keyを"ctrl_cmd_enter"に設定）。
 - 変更を指示された項目のみ `updates` に含めてください。
 - background_image_url、background_image_data、background_image_filename はAIで生成・更新しないでください。画像指定はファイルアップロードでのみ行います。
 - 雑談や質問は type: "message" とし、二人称「{user_nickname}」、一人称「{ai_pronoun}」で回答してください。
@@ -416,7 +416,7 @@ You are an AI for managing system settings. Analyze the user's input and decide 
   - background_image_layout: "tile" (Tile), "original" (Original), "fit" (Fit)
   - currency: "JPY", "USD", "EUR"
   - language: "ja" (Japanese), "en" (English)
-  - send_key: "enter", "shift_enter"
+  - send_key: "enter", "shift_enter", "ctrl_cmd_enter"
   - llm_provider: "openai", "ollama", "openai_api"
   - llm_url: any URL string
   - llm_model: any model name string
@@ -425,7 +425,7 @@ You are an AI for managing system settings. Analyze the user's input and decide 
   - allowed_hosts: any comma-separated host string
   - clear_delete_confirm_skips: "true" only. Resets the "don't show again" state of the delete confirmation dialogs for parts inventory and product recipes so the confirmations are shown again (e.g. "show the delete confirmation again", "clear the delete confirmation status")
 - If the user's instruction changes settings, include the corresponding keys and values in `updates`.
-- Convert values strictly to the valid values above. For example, "make the background dark" -> theme_wallpaper: "dark", "use dots for the background image" -> background_image_mode: "dots", "use diagonal stripes" -> background_image_mode: "stripes", "use a checkered background" -> background_image_mode: "checks", "no background image" -> background_image_mode: "none", "make the dots larger" -> background_dot_size with a larger numeric string, "make the stripes thicker" -> background_stripe_width with a larger numeric string, "increase the check spacing" -> background_check_size with a larger numeric string, "tile the image" -> background_image_layout: "tile", "show the image at original size" -> background_image_layout: "original", "fit the image to the screen" -> background_image_layout: "fit", "make the theme blue" -> theme_color: "ocean", "lemon theme" -> theme_color: "lemon", "send with Enter only" -> send_key: "enter".
+- Convert values strictly to the valid values above. For example, "make the background dark" -> theme_wallpaper: "dark", "use dots for the background image" -> background_image_mode: "dots", "use diagonal stripes" -> background_image_mode: "stripes", "use a checkered background" -> background_image_mode: "checks", "no background image" -> background_image_mode: "none", "make the dots larger" -> background_dot_size with a larger numeric string, "make the stripes thicker" -> background_stripe_width with a larger numeric string, "increase the check spacing" -> background_check_size with a larger numeric string, "tile the image" -> background_image_layout: "tile", "show the image at original size" -> background_image_layout: "original", "fit the image to the screen" -> background_image_layout: "fit", "make the theme blue" -> theme_color: "ocean", "lemon theme" -> theme_color: "lemon", "send with Enter only" -> send_key: "enter", "send with Ctrl/Cmd+Enter" -> send_key: "ctrl_cmd_enter".
 - Include only the fields explicitly requested by the user.
 - Do not generate or update background_image_url, background_image_data, or background_image_filename. Custom image selection is handled only by file upload.
 - For small talk or questions, return type: "message" and answer using "{user_nickname}" as the second-person reference and "{ai_pronoun}" as the first-person reference.
