@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Partomate note header</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@600&display=swap");
+
+      :root {
+        --tomato: #ff6347;
+        --sand: #fdfbf7;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-width: 100%;
+        height: 100%;
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background: var(--sand);
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+        min-height: 216px;
+        padding: 8vh 8vw;
+        background: var(--sand);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: clamp(24px, 3.5vw, 52px);
+      }
+
+      .brand-icon {
+        width: clamp(120px, 15vw, 190px);
+        height: clamp(120px, 15vw, 190px);
+        flex: 0 0 auto;
+        border-radius: 21%;
+      }
+
+      .brand-name {
+        color: var(--tomato);
+        font-family: "Outfit", "Avenir Next", Avenir, sans-serif;
+        font-size: clamp(72px, 10vw, 128px);
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: -0.045em;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="header" aria-label="Partomate">
+      <div class="brand">
+        <img
+          class="brand-icon"
+          src="../assets/icon/app.svg"
+          alt=""
+          width="190"
+          height="190"
+        />
+        <div class="brand-name">Partomate</div>
+      </div>
+    </main>
+  </body>
+</html>
