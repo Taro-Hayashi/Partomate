@@ -1,12 +1,13 @@
 # Partomate ([日本語](README_JP.md))
 
+![Partomate](img/title_en.jpg)
+
 Partomate is a web application for managing parts, inventory, and product compositions.
 It lets you track part quantities, categories, unit prices, purchase dates, and low-stock thresholds, as well as review the parts used in each product and their estimated cost.
 
 With the AI chat feature, you can describe inventory additions, inventory consumption, and product composition changes in natural language.
 AI-proposed changes are applied to the database only after the user approves them.
 
-![Partomate](img/title_en.jpg)
 ![AI chat](img/topchat_en.jpg)
 ![Inventory](img/iventory_en.jpg)
 ![Part details](img/item_en.jpg)
