@@ -26,6 +26,9 @@ With the AI chat feature, you can create proposals for inventory additions, inve
 - [Qwen3-VL-4B-Instruct-GGUF](https://huggingface.co/unsloth/Qwen3-VL-4B-Instruct-GGUF)
 - GPT-5.4 nano
 
+## Windows / Mac
+- https://github.com/Taro-Hayashi/Partomate/releases/latest
+
 ## Installing with Docker
 
 ### Requirements
