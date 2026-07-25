@@ -11,6 +11,9 @@ AIチャット機能を使うと、在庫の追加・消費や商品構成の変
 ![Part details](img/item.jpg)
 ![Settings](img/setting.jpg)
 
+## Mac / Windows
+- https://github.com/Taro-Hayashi/Partomate/releases/latest
+  
 ## 主な機能
 
 - 部品在庫の登録、編集、削除
