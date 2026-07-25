@@ -9,6 +9,8 @@ With the AI chat feature, you can create proposals for inventory additions, inve
 ## Windows / Mac
 - https://github.com/Taro-Hayashi/Partomate/releases/latest
 
+
+   
 ![AI chat](img/topchat_en.jpg)
 ![Inventory](img/iventory_en.jpg)
 ![Part details](img/item_en.jpg)
