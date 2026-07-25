@@ -6,6 +6,9 @@ Partomate is a web application for managing parts inventory.
 It lets you track part quantities and categories, and review the components and estimated cost of each product.
 With the AI chat feature, you can create proposals for inventory additions, inventory consumption, and product composition changes using natural language.
 
+## Windows / Mac
+- https://github.com/Taro-Hayashi/Partomate/releases/latest
+
 ![AI chat](img/topchat_en.jpg)
 ![Inventory](img/iventory_en.jpg)
 ![Part details](img/item_en.jpg)
@@ -26,8 +29,6 @@ With the AI chat feature, you can create proposals for inventory additions, inve
 - [Qwen3-VL-4B-Instruct-GGUF](https://huggingface.co/unsloth/Qwen3-VL-4B-Instruct-GGUF)
 - GPT-5.4 nano
 
-## Windows / Mac
-- https://github.com/Taro-Hayashi/Partomate/releases/latest
 
 ## Installing with Docker
 
