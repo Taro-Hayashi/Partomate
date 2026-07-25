@@ -6,7 +6,7 @@ Partomate は、部品在庫を管理するためのWebアプリケーション�
 部品の数量、カテゴリなどを記録し、商品ごとの構成部品や概算原価を確認できます。  
 AIチャット機能を使うと、在庫の追加・消費や商品構成の変更案を自然文から作成できます。  
 
-## Mac / Windows
+## Windows / Mac
 - https://github.com/Taro-Hayashi/Partomate/releases/latest
   
 ![AI chat](img/topchat.jpg)
