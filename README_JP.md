@@ -1,12 +1,13 @@
 # Partomate（[English](README.md)）
 
+![Partomate](img/title_jp.jpg)
+
 Partomate は、部品・在庫・商品構成を管理するためのWebアプリケーションです。
 部品の数量、カテゴリ、単価、購入日、低在庫しきい値を記録し、商品ごとの構成部品や概算原価を確認できます。
 
 AIチャット機能を使うと、在庫の追加・消費や商品構成の変更案を自然文から作成できます。
 AIが提案した変更は、ユーザーが承認した場合だけデータベースへ反映されます。
 
-![Partomate](img/title_jp.jpg)
 ![AI chat](img/topchat.jpg)
 ![Inventory](img/inventory.jpg)
 ![Part details](img/item.jpg)
