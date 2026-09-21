@@ -14,9 +14,13 @@ const detectBrowserLanguage = () =>
   (navigator.language || '').toLowerCase().startsWith('ja') ? 'ja' : 'en';
 
 const API_PORT = import.meta.env.VITE_API_PORT || '18000';
+const RAW_API_BASE = import.meta.env.VITE_API_BASE;
+// An empty VITE_API_BASE is a valid setting: it means the API is served on the
+// same origin (the frontend container proxies /api and /uploads to the backend).
 const API_BASE =
-  import.meta.env.VITE_API_BASE ||
-  `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
+  RAW_API_BASE === undefined
+    ? `${window.location.protocol}//${window.location.hostname}:${API_PORT}`
+    : String(RAW_API_BASE).replace(/\/+$/, '');
 
 const clampBackgroundDotSize = (sizeValue: string) => {
   const fallback = 10;
